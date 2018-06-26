@@ -31,6 +31,11 @@ import time
 
 import jwt
 import paho.mqtt.client as mqtt
+
+import GPS
+import LORA
+import json
+import datetime
 # [END iot_mqtt_includes]
 
 # The initial backoff time after a disconnection occurs, in seconds.
@@ -237,8 +242,9 @@ def main():
         args.private_key_file, args.algorithm, args.ca_certs,
         args.mqtt_bridge_hostname, args.mqtt_bridge_port)
 
-    # Publish num_messages mesages to the MQTT bridge once per second.
-    for i in range(1, args.num_messages + 1):
+    LORA.init_Lora(); 
+    # Check every second
+    while True:
         # Process network events.
         client.loop()
 
@@ -256,10 +262,42 @@ def main():
             minimum_backoff_time *= 2
             client.connect(args.mqtt_bridge_hostname, args.mqtt_bridge_port)
 
-        payload = '{}/{}-payload-{}'.format(
-                args.registry_id, args.device_id, i)
-        print('Publishing message {}/{}: \'{}\''.format(
-                i, args.num_messages, payload))
+
+        # Si se reciben datos desde Lora
+
+        result_LORA = LORA.read_Lora();
+        result_LORA = result_LORA[1:-1];
+        result_LORA = result_LORA.split(',');
+	date_time = str(datetime.datetime.now())[:-7];
+	
+	gps = GPS.read_GPS();
+	latitude_data = gps[0];
+	longitude_data = gps[1];
+
+        data = {
+            'identification':{
+		'gateway': "1",
+		'nodo' : result_LORA[0][3:]
+	    },
+            'time': date_time,
+            'position': {
+                'latitude' : latitude_data,
+                'longitude' : longitude_data
+            },
+            'sensors': {
+                'temperatura': result_LORA[1][2:],
+                'humedad_aire': result_LORA[2][3:],
+                'presion': result_LORA[5][2:],
+                'luz': result_LORA[3][2:],
+                'humedad_suelo': result_LORA[4][3:]
+            }
+        }
+
+
+
+        payload = json.dumps(data)
+        print('Publishing message:  \'{}\''.format(
+                payload))
         # [START iot_mqtt_jwt_refresh]
         seconds_since_issue = (datetime.datetime.utcnow() - jwt_iat).seconds
         if seconds_since_issue > 60 * jwt_exp_mins:
@@ -278,8 +316,6 @@ def main():
 
         # Send events every second. State should not be updated as often
         time.sleep(1 if args.message_type == 'event' else 5)
-
-    print('Finished.')
 # [END iot_mqtt_run]
 
 

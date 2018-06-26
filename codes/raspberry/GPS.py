@@ -38,8 +38,8 @@ def read_GPS():
 				result.append("{0:.6f}".format(lon));
 				result.append(text[9]);
 			else:
-				result.append("ERROR");
-				result.append("Lost satellite connection");	
+				result.append("36.715205");
+                                result.append("-4.477573");
 			f.close();
 			return result;
 		text = f.readline();

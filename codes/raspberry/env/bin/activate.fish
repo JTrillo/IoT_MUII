@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/pi/Master_UMA/IoT/python-docs-samples/iot/api-client/mqtt_example/env"
+set -gx VIRTUAL_ENV "/home/pi/Master_UMA/IoT/IoT_MUII/codes/raspberry/env"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

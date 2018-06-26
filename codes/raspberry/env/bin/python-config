@@ -1,4 +1,4 @@
-#!/home/pi/Master_UMA/IoT/python-docs-samples/iot/api-client/mqtt_example/env/bin/python
+#!/home/pi/Master_UMA/IoT/IoT_MUII/codes/raspberry/env/bin/python
 
 import sys
 import getopt
