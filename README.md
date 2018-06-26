@@ -6,3 +6,6 @@ We use those libraries:
 
 Bibliography:
 * https://www.dfrobot.com/wiki/index.php/Capacitive_Soil_Moisture_Sensor_SKU:SEN0193
+
+If you want to check the data collected by the sensors you must login with your Gmail account in this site: http://masteruma04.appspot.com  
+Then, you have to send us a request in order to see all the information received.
