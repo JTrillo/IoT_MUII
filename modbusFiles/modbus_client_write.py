@@ -1,9 +1,10 @@
 from pyModbusTCP.client import ModbusClient
 import time
 
-#toggle = True
-cont = 0
-c = ModbusClient(host="localhost", port=502, auto_open=True)
+list = [1, 3, 5, 8]
+toggle = True
+ip_host = "192.168.43.51"
+c = ModbusClient(host=ip_host, port=502, auto_open=True)
 
 while True:
     if not c.is_open():
@@ -11,14 +12,13 @@ while True:
             print("unable to connect")
             
     if c.is_open():
-        for addr in range(4, 7):
-            is_ok = c.write_single_coil(addr, cont)
+        for addr in list:
+            is_ok = c.write_single_coil(addr, toggle)
             if is_ok:
-                print("bit #"+str(addr) + ": write to " + str(cont))
+                print("bit #"+str(addr) + ": write to " + str(toggle))
             else:
-                print("bit #"+str(addr) + ": unable to write " + str(cont))
-            cont = cont + 1
+                print("bit #"+str(addr) + ": unable to write " + str(toggle))
             time.sleep(2)
         
-    #toggle = not toggle
+    toggle = not toggle
     time.sleep(5)
