@@ -1,12 +1,13 @@
 from pyModbusTCP.client import ModbusClient
 import time
 
-c = ModbusClient(host="localhost", port=502, auto_open=True)
+ip_host = "192.168.43.51"
+c = ModbusClient(host=ip_host, port=502, auto_open=True)
 
 while True:
     if not c.is_open():
         if not c.open():
-            print("unable to connect")
+            print("unable to connect to " + ip_host)
             
     if c.is_open():
         """regs = c.read_holding_registers(0, 10)
