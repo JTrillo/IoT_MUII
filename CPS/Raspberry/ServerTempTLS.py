@@ -1,19 +1,16 @@
-"""from pprint import pprint
-import requests
-APIKEY = "e74b065c773537748aff0a1f572a24cf"
-ID = "6359472"
-r = requests.get('http://api.openweathermap.org/data/2.5/weather?id={ID}&APPID={APIKEY}')
-pprint(r.json())"""
-
 import socket
+import ssl
 
 IP_ADDR = '192.168.43.99' #CHANGE IT
 PORT = 8090 #CHANGE IT
+CERTFILE = 'path/to/certfile' #CHANGE IT
+KEYFILE = 'path/to/keyfile' #CHANGE IT
 
-s = socket.socket()
-
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.bind((IP_ADDR, PORT))
 s.listen(0)
+
 print("Server started in {0}:{1}".format(IP_ADDR, PORT))
 
 while True:
@@ -21,7 +18,13 @@ while True:
     client, addr = s.accept()
     print('Client connected: ', addr)
 
-    content = client.recv(32)
+    secure_sock = ssl.wrap_socket(client, server_side=True, certfile=CERTFILE,
+                        keyfile=KEYFILE, ssl_version=ssl.PROTOCOL_TLSv1_2)
+
+    #print(repr(secure_sock.getpeername()))
+    #print(secure_sock.cipher())
+
+    content = secure_sock.recv(32)
 
     if len(content) == 0:
         break
@@ -39,6 +42,6 @@ while True:
             response = 'G'
 
         print("Response " + response)
-        client.sendall(response.encode("utf-8"))
+        secure_sock.sendall(response.encode("utf-8"))
     print("Closing connection...")
-    client.close()
+    secure_sock.close()

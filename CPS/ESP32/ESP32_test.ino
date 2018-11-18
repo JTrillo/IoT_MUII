@@ -1,7 +1,7 @@
 #include <WiFi.h>
 #define NLEDS 3
-#define PIN_TEMP //CHANGE IT
-#define PIN_LEDS //CHANGE IT
+#define PIN_TEMP A8//CHANGE IT
+#define PIN_LEDS 12//CHANGE IT
 
 // TEMPERATURE SENSOR
 struct Temperature {
@@ -20,16 +20,18 @@ void setupTemperature(struct Temperature * temp, byte pin, unsigned long per, in
 void loopTemperature(struct Temperature * temp, unsigned long ms){
   if(ms-temp->last_ms >= temp->period_ms){
     temp->last_ms = ms;
+    /*
     int reading;
-    float millivolts, celsius;
-    float suma = 0.0;
+    float volt;
+    float sum = 0.0;
     for(int i=0; i<temp->cont; i++){
-      reading = analogRead(temp->pin);
-      millivolts = (reading / 1023.0) * 5000;
-      celsius = millivolts / 10;
-      suma = suma + celsius;
+      reading = analogRead(temp->pin);;
+      volt = (reading / 1024.0) * 5.0;
+      suma = suma + ((volt - 0.5) * 100.0);
     }
     temp->value = suma / (float)temp->cont;
+    */
+    temp->value = 15.0;
   }
 }
 
@@ -79,13 +81,13 @@ unsigned long curr_ms, last_ms=0;
 struct Temperature t1;
 struct Leds leds1;
 
-const char* ssid = "yourNetworkName"; //CHANGE IT
-const char* password =  "yourNetworkPass"; //CHANGE IT
+const char* ssid = "POCOPHONE"; //CHANGE IT
+const char* password =  "holahola"; //CHANGE IT
 
 const uint16_t port = 8090; //CHANGE IT
-const char * host = "192.168.1.83"; //CHANGE IT
+const char * host = "192.168.43.99"; //CHANGE IT
 
-WifiClient client;
+WiFiClient client;
 //----------------------------------------------------
 void setup() {
   Serial.begin(115200);
@@ -99,11 +101,12 @@ void setup() {
   Serial.print("WiFi connected with IP: ");
   Serial.println(WiFi.localIP());
 
-  //client.connect(host, port);
+  client.connect(host, port);
 
   //Setup temperature sensor and leds
   setupTemperature(&t1, PIN_TEMP, 10000, 20, 0);
   setupLeds(&leds1, PIN_LEDS);
+  Serial.println("Configuración completada");
 }
 
 void loop() {
@@ -114,9 +117,9 @@ void loop() {
     Serial.print("Leido: ");
     Serial.println(reading);
     loopLeds(&leds1, reading);
+
   }
   if(curr_ms-last_ms>=30000){ //Each 30 seconds we send the temperature value
-    client.connect(host, port);
-    client.println(t1->value);
+    client.println(t1.value);
   }
 }
