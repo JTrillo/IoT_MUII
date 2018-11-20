@@ -1,10 +1,10 @@
 import socket
 import ssl
 
-IP_ADDR = '192.168.43.99' #CHANGE IT
+IP_ADDR = '192.168.43.65' #CHANGE IT
 PORT = 8090 #CHANGE IT
-CERTFILE = 'path/to/certfile' #CHANGE IT
-KEYFILE = 'path/to/keyfile' #CHANGE IT
+CERTFILE = '192.168.43.65.cert.pem' #CHANGE IT
+KEYFILE = '192.168.43.65.key.pem' #CHANGE IT
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -20,12 +20,11 @@ while True:
 
     secure_sock = ssl.wrap_socket(client, server_side=True, certfile=CERTFILE,
                         keyfile=KEYFILE, ssl_version=ssl.PROTOCOL_TLSv1_2)
-
     #print(repr(secure_sock.getpeername()))
     #print(secure_sock.cipher())
 
-    content = secure_sock.recv(32)
-
+    content = secure_sock.recv(1024)
+    
     if len(content) == 0:
         break
     else:
@@ -42,6 +41,8 @@ while True:
             response = 'G'
 
         print("Response " + response)
-        secure_sock.sendall(response.encode("utf-8"))
+        secure_sock.sendall(response.encode("ascii"))
+        print(response.encode("ascii").hex())
     print("Closing connection...")
     secure_sock.close()
+
