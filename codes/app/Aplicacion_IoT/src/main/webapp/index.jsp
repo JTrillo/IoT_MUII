@@ -41,7 +41,7 @@
 		}
 		</style>
 		<!-- Maps API -->
-		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCr3GPww9LQ81m-GeRa4yAaI4myBaa82VI"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=INSERT_YOUR_API_KEY"></script>
 	</head>
 	<body>
 		<%
